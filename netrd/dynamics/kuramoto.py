@@ -2,7 +2,7 @@
 kuramoto.py
 ---------------------
 
-author: Harrison Hartle 
+author: Harrison Hartle
 """
 
 from .base import BaseDynamics
@@ -50,18 +50,18 @@ class Kuramoto(BaseDynamics):
 
         t = np.linspace(dt,L*dt,L) # time-vector
         o = np.ones(N)             # define a rate of change function
-        
+
         ddt_psis = lambda psi,t,g,K,A: g+(K/N)*(A*np.sin(np.outer(o,psi)-np.outer(psi,o))).dot(o)
-        
-        
+
+
         argu = (g, K, A) # arguments in a tuple for it.integrate
         # integrate the equations of motion numerically
         TS_T = it.odeint(ddt_psis, psi0, t, args=argu)
-        
+
         # odeint returns LxN result - transposing yields reversed-order nodes => apply flipud.
-        TS = np.flipud(TS_T.T) 
-        
-       
+        TS = np.flipud(TS_T.T)%(2.0*np.pi)  # also, restrict to interval [0,2*pi)
+
+
         self.results['internal_frequencies'] = g  # save the internal-frequency vector to results
         self.results['ground_truth'] = G          # save the ground-truth network to results
         self.results['TS'] = TS                   # save the timeseries data to results
